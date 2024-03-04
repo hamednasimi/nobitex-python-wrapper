@@ -1,4 +1,4 @@
-# Originally published by Hamed Nasimi at 
+# Originally published by Hamed Nasimi at https://github.com/hamednasimi/nobitex-python-wrapper
 
 import asyncio
 import aiohttp
