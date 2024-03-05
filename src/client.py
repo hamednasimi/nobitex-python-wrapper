@@ -33,9 +33,9 @@ class Client:
         
         Args:
             api_token: The API token to use for authentication.
-            bot_mode: Whether to run in bot mode or not. Defaults to True.
-            bot_name: The name of the bot. Defaults to 'WrapperBot'.
-            rate_limiter: Whether to use the built-in rate limiter. Defaults to True.
+            bot_mode: Whether to run in bot mode or not. Defaults to `True`.
+            bot_name: The name of the bot. Defaults to `'WrapperBot'`.
+            rate_limiter: Whether to use the built-in rate limiter. Defaults to `True`.
             
         Returns:
             None
@@ -64,47 +64,45 @@ class Client:
     async def __get(
         self, 
         url: str, 
-        params: dict = None
+        params: dict = None, 
+        headers: dict = None
         ) -> dict:
         """
         The main coroutine for handling GET requests.
         
         Args:
             url: The URL of the API endpoint to call.
-            params: The dictionary that will get converted to query string.
+            params: The `dict` that will get converted to query string.
             
         Returns:
-            A dictionary containing the response.
+            A `dict` containing the response.
         """
         
         # print(params) # DEBUG
-        if url and not params:
-            response = await self.__session.get(f"{url}")
-        elif url and params:
-            response = await self.__session.get(f"{url}", params=params)
+        response = await self.__session.get(f"{url}", params=params, headers=headers)
         # print(response.url)
         return await response.json()
     
     async def __post(
         self, 
         url: str, 
-        params: dict = None
+        params: dict = None, 
+        headers: dict = None,
+        data: dict = None
         ) -> dict:
         """
         The main coroutine for handling POST requests.
         
         Args:
             url: The URL of the API endpoint to call.
-            params: The dictionary that will get converted to query string.
+            params: The `dict` that will get converted to query string.
             
         Returns:
-            A dictionary containing the response.
+            A `dict` containing the response.
         """
-        # print(url) # DEBUG
-        if url and not params:
-            response = await self.__session.post(f"{url}")
-        elif url and params:
-            response = await self.__session.post(f"{url}", params=params)
+        
+        print(data) # DEBUG
+        response = await self.__session.post(f"{url}", params=params, headers=headers, data=data)
         # print(response.url)
         return await response.json()
     
@@ -123,7 +121,7 @@ class Client:
             To get the result for all symbols use `Symbol.ALL`.
 
         Returns:
-            The order book data as a dictionary.
+            The order book data as a `dict`.
             
         Raises:
             None
@@ -146,7 +144,7 @@ class Client:
             Can't pass `Symbol.ALL` as the argument.
 
         Returns:
-            The market depth data as a dictionary.
+            The market depth data as a `dict`.
             
         Raises:
             None
@@ -171,7 +169,7 @@ Consider fetching them by calling this method for each individual symbol.")
             Can't pass `Symbol.ALL` as the argument.
 
         Returns:
-            The list of trades as a dictionary.
+            The list of trades as a `dict`.
             
         Raises:
             None
@@ -198,7 +196,7 @@ Consider fetching them by calling this method for each individual symbol.")
             destination_currency (dstCurrency): The destination currency.
 
         Returns:
-            The market stats as a dictionary.
+            The market stats as a `dict`.
             
         Raises:
             None
@@ -235,7 +233,7 @@ Consider fetching them by calling this method for each individual symbol.")
             page: The number of pages to split the returning results into.
 
         Returns:
-            OHLCV data as a dictionary.
+            OHLCV data as a `dict`.
             
         Raises:
             None
@@ -261,7 +259,7 @@ Consider fetching them by calling this method for each individual symbol.")
             None
 
         Returns:
-            The global market stats as a dictionary.
+            The global market stats as a `dict`.
             
         Raises:
             None
@@ -293,3 +291,43 @@ Consider fetching them by calling this method for each individual symbol.")
             raise Exception("The client does not have a token!\
  Initialize the client using your API token as such:\
  `client = Client('apitoken0000000000000')`")
+        
+    async def generate_wallet_address(
+        self, 
+        currency: Currency = None, 
+        wallet: str = None
+        ) -> dict:
+        """
+        Generate a wallet address for the user.
+        
+        Rate limit: 30/H
+        Token: Required
+        
+        Args:
+            currency: Which currency to create the address for.
+            `currency` is required if `wallet` is not passed to the method.
+            wallet: The wallet ID. Required if `currency` is not passed.
+            If both `currency` and `wallet` are passed, `currency` has precedence.
+
+        Returns:
+            `dict` containing the generated address.
+        
+        Raises:
+            None
+        """
+        
+        if currency and not wallet:
+            data = {"currency": currency.value}
+        elif wallet and not currency:
+            data = {"wallet": wallet}
+        else:
+            data = {"currency": currency.value, "wallet": wallet}
+        if self.has_token:
+            return await self.__post(
+                Path.GENERATE_WALLET_ADDRESS.value, 
+                headers={"content-type": "application/json"},
+                data=str(data))
+        else:
+            raise Exception("The client does not have a token!\
+ Initialize the client using your API token as such:\
+ `client = Client('yourapitokenhere00000000000000000000')`")
