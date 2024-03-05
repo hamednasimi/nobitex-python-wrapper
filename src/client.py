@@ -102,7 +102,8 @@ class Client:
         """
         
         print(data) # DEBUG
-        response = await self.__session.post(f"{url}", params=params, headers=headers, data=data)
+        print(type(data)) # DEBUG
+        response = await self.__session.post(f"{url}", params=params, headers=headers, data=str(data))
         # print(response.url)
         return await response.json()
     
@@ -319,15 +320,91 @@ Consider fetching them by calling this method for each individual symbol.")
         if currency and not wallet:
             data = {"currency": currency.value}
         elif wallet and not currency:
-            data = {"wallet": wallet}
-        else:
-            data = {"currency": currency.value, "wallet": wallet}
+            data = {"wallet": str(wallet)}
+        elif wallet and currency:
+            data = {"currency": currency.value, "wallet": str(wallet)}
+        elif not currency and not wallet:
+            raise Exception("At least one argument is needed.")
         if self.has_token:
             return await self.__post(
                 Path.GENERATE_WALLET_ADDRESS.value, 
                 headers={"content-type": "application/json"},
-                data=str(data))
+                data=data)
         else:
             raise Exception("The client does not have a token!\
  Initialize the client using your API token as such:\
- `client = Client('yourapitokenhere00000000000000000000')`")
+ `client = Client('yourTOKENhereHEX0000000000')`")
+
+    async def add_card(
+        self, 
+        number: int, 
+        bank: str
+        ) -> dict:
+        """
+        Add an iranian bank card to the Nobitex account.
+        
+        Rate limit: 30/30M
+        Token: Required
+        
+        Args:
+            number: The card number to add to the Nobitex account.
+            bank: The name of the bank in Persian.
+
+        Returns:
+            `dict` containing the status of the request.
+        
+        Raises:
+            None
+        """
+        
+        if number and bank:
+            data = {"number": str(number), "bank": str(bank)}
+        else:
+            raise Exception("Both `number` and `bank` arguments are required.")
+        if self.has_token:
+            return await self.__post(
+                Path.ADD_CARD.value, 
+                headers={"content-type": "application/json"},
+                data=data)
+        else:
+            raise Exception("The client does not have a token!\
+ Initialize the client using your API token as such:\
+ `client = Client('yourTOKENhereHEX0000000000')`")
+
+    async def add_account(
+        self, 
+        number: int, 
+        shaba: str, 
+        bank: str
+        ) -> dict:
+        """
+        Add an iranian bank account to the Nobitex account.
+        
+        Rate limit: 30/30M
+        Token: Required
+        
+        Args:
+            number: The card number to add to the Nobitex account.
+            shaba: The bank account's shaba number.
+            bank: The name of the bank in Persian.
+
+        Returns:
+            `dict` containing the status of the request.
+        
+        Raises:
+            None
+        """
+        
+        if number and shaba and bank:
+            data = {"number": str(number), "shaba": str(shaba), "bank": str(bank)}
+        else:
+            raise Exception("All of the `number`, `shaba` and `bank` arguments are required.")
+        if self.has_token:
+            return await self.__post(
+                Path.ADD_ACCOUNT.value, 
+                headers={"content-type": "application/json"},
+                data=data)
+        else:
+            raise Exception("The client does not have a token!\
+ Initialize the client using your API token as such:\
+ `client = Client('yourTOKENhereHEX0000000000')`")

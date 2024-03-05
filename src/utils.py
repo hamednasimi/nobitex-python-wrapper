@@ -108,6 +108,8 @@ class Path(Enum):
     # User info
     GET_USER_PROFILE = "/users/profile"
     GENERATE_WALLET_ADDRESS = "/users/wallets/generate-address"
+    ADD_CARD = "/users/cards-add"
+    ADD_ACCOUNT = "/users/accounts-add"
     
 class Resolution(Enum):
     
