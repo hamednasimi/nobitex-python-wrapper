@@ -6,6 +6,7 @@ import time
 from .utils import *
 
 # TODO Make the exception class
+# TODO Create the rate limiter
 # TODO Make the methods argument lists fool-proof (conditions and assertions)
 # TODO Make importing the client also import the `utils` classes
 
@@ -43,7 +44,14 @@ class Client:
             None
         """
         
-        self.__session = aiohttp.ClientSession(base_url=Client.REST_API_BASE_URL)
+        if api_token:
+            self.has_token = True
+            self.__session = aiohttp.ClientSession(
+                base_url=Client.REST_API_BASE_URL, 
+                headers={"Authorization": f"Token {api_token}"})
+        else:
+            self.has_token = False
+            self.__session = aiohttp.ClientSession(base_url=Client.REST_API_BASE_URL)
         
     # Methods
     
@@ -261,3 +269,27 @@ Consider fetching them by calling this method for each individual symbol.")
         
         return await self.__post(
             f"{Path.GET_GLOBAL_MARKET_STATS.value}")
+        
+    async def get_user_profile(self) -> dict:
+        """
+        Get the user info including card info, bank account info etc.
+        
+        Rate limit: N/A
+        Token: Required
+
+        Args:
+            None
+
+        Returns:
+            Dictionary containing user info.
+                        
+        Raises:
+            None
+        """
+        
+        if self.has_token:
+            return await self.__get(Path.GET_USER_PROFILE.value)
+        else:
+            raise Exception("The client does not have a token!\
+ Initialize the client using your API token as such:\
+ `client = Client('apitoken0000000000000')`")

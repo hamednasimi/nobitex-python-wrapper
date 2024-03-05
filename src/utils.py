@@ -97,12 +97,16 @@ class Currency(Enum):
     
 class Path(Enum):
     
+    # Public market data
     GET_ORDER_BOOK = "/v2/orderbook/"
     GET_MARKET_DEPTH = "/v2/depth/"
     GET_TRADES = "/v2/trades/"
     GET_MARKET_STATS = "/market/stats"
     OHLCV = "/market/udf/history"
     GET_GLOBAL_MARKET_STATS = "/market/global-stats"
+    
+    # User info
+    GET_USER_PROFILE = "/users/profile"
     
 class Resolution(Enum):
     

@@ -1,4 +1,4 @@
-# Unofficial API wrapper for the Nobitex crypto exchange
+# An unofficial wrapper for the Nobitex crypto exchange API
 
 Currently supports the public API nodes including:
 - The orderbook
@@ -7,6 +7,7 @@ Currently supports the public API nodes including:
 - Nobitex market stats
 - OHLCV data
 - Global market stats
+- Get user profile data
 
 ## Get started:
 
@@ -22,6 +23,9 @@ async def main():
 
     # Create the client
     client = Client()
+    
+    # If you need account-bound operations, use your token here.
+    # client = Client('yourapitokenhere00000000000000000000')
 
     # Make a try/except block to catch exceptions
     try:
