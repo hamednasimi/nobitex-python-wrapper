@@ -29,7 +29,7 @@ class Client:
         rate_limiter: bool = True
         ) -> None:
         """
-        Initializes the client with the given API token and sets up the necessary resources.
+       Initializ es the client with the given API token and sets up the necessary resources.
         
         Args:
             api_token: The API token to use for authentication.
@@ -65,7 +65,8 @@ class Client:
         self, 
         url: str, 
         params: dict = None, 
-        headers: dict = None
+        headers: dict = None, 
+        data: dict = None
         ) -> dict:
         """
         The main coroutine for handling GET requests.
@@ -79,7 +80,11 @@ class Client:
         """
         
         # print(params) # DEBUG
-        response = await self.__session.get(f"{url}", params=params, headers=headers)
+        response = await self.__session.get(
+            f"{url}", 
+            params=params, 
+            headers=headers, 
+            data=str(data))
         # print(response.url)
         return await response.json()
     
@@ -103,7 +108,11 @@ class Client:
         
         print(data) # DEBUG
         print(type(data)) # DEBUG
-        response = await self.__session.post(f"{url}", params=params, headers=headers, data=str(data))
+        response = await self.__session.post(
+            f"{url}", 
+            params=params, 
+            headers=headers, 
+            data=str(data))
         # print(response.url)
         return await response.json()
     
@@ -289,9 +298,9 @@ Consider fetching them by calling this method for each individual symbol.")
         if self.has_token:
             return await self.__get(Path.GET_USER_PROFILE.value)
         else:
-            raise Exception("The client does not have a token!\
- Initialize the client using your API token as such:\
- `client = Client('apitoken0000000000000')`")
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('apitoken0000000000000')`")
         
     async def generate_wallet_address(
         self, 
@@ -331,9 +340,9 @@ Consider fetching them by calling this method for each individual symbol.")
                 headers={"content-type": "application/json"},
                 data=data)
         else:
-            raise Exception("The client does not have a token!\
- Initialize the client using your API token as such:\
- `client = Client('yourTOKENhereHEX0000000000')`")
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
 
     async def add_card(
         self, 
@@ -367,9 +376,9 @@ Consider fetching them by calling this method for each individual symbol.")
                 headers={"content-type": "application/json"},
                 data=data)
         else:
-            raise Exception("The client does not have a token!\
- Initialize the client using your API token as such:\
- `client = Client('yourTOKENhereHEX0000000000')`")
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
 
     async def add_account(
         self, 
@@ -395,6 +404,7 @@ Consider fetching them by calling this method for each individual symbol.")
             None
         """
         
+        data = {}
         if number and shaba and bank:
             data = {"number": str(number), "shaba": str(shaba), "bank": str(bank)}
         else:
@@ -405,6 +415,68 @@ Consider fetching them by calling this method for each individual symbol.")
                 headers={"content-type": "application/json"},
                 data=data)
         else:
-            raise Exception("The client does not have a token!\
- Initialize the client using your API token as such:\
- `client = Client('yourTOKENhereHEX0000000000')`")
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
+
+    async def get_user_limitations(
+        self, 
+        ) -> dict:
+        """
+        Get the limitations on the actions the user can take and the amount of \
+allowed withdrawals from the website.
+        
+        Rate limit: N/A
+        Token: Required
+        
+        Args:
+            None
+
+        Returns:
+            `dict` containing the user limits.
+        
+        Raises:
+            None
+        """
+        
+        if self.has_token:
+            return await self.__post(
+                Path.GET_USER_LIMITATIONS.value, 
+                headers={"content-type": "application/json"},)
+        else:
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
+        
+    async def get_wallet_list(
+        self, 
+        type: TradeType = None, 
+        ) -> dict:
+        """
+        Get the list of wallets in the user account.
+        By default returns spot wallets.
+        
+        Rate limit: 20/2MIN
+        Token: Required
+        
+        Args:
+            type: The type of wallet to return.
+
+        Returns:
+            `dict` containing the user wallets.
+        
+        Raises:
+            None
+        """
+        
+        data = {}
+        if type:
+            data = {"type": type.value}
+        if self.has_token:
+            return await self.__get(
+                Path.GET_WALLET_LIST.value, 
+                data=data)
+        else:
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")

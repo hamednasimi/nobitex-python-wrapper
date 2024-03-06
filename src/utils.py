@@ -110,6 +110,8 @@ class Path(Enum):
     GENERATE_WALLET_ADDRESS = "/users/wallets/generate-address"
     ADD_CARD = "/users/cards-add"
     ADD_ACCOUNT = "/users/accounts-add"
+    GET_USER_LIMITATIONS = "/users/limitations"
+    GET_WALLET_LIST = "/users/wallets/list"
     
 class Resolution(Enum):
     
@@ -125,5 +127,10 @@ class Resolution(Enum):
     _1DAY = 'D'
     _2DAY = '2D'
     _3DAY = '3D'
+    
+class TradeType(Enum):
+    
+    SPOT = "spot"
+    MARGIN = "margin"
     
 RESTAPIRequestType = Literal["GET", "POST", "PUT", "DELETE"]
