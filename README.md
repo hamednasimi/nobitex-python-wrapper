@@ -35,7 +35,14 @@ async def main():
             client.get_market_depth(symbol=Symbol.BTCUSDT), 
             client.get_trades(symbol=Symbol.BTCUSDT), 
             client.get_market_stats(Currency.btc, Currency.ada, destination_currency=Currency.usdt), 
-            client.get_global_market_stats()
+            client.get_global_market_stats(),
+            client.get_user_profile(), 
+            client.generate_wallet_address(Currency.btc), 
+            # client.add_card("bankCARDnumber", "bankNAME"), 
+            # client.add_account("bankCARDnumber", "IR0000000000000000000000", "bankNAME"), 
+            client.get_user_limitations(), 
+            client.get_wallet_list(), 
+            client.get_wallets(Currency.usdt, type=TradeType.MARGIN)
             ]
 
         # Run all of them and catch each result as soon as it's complete

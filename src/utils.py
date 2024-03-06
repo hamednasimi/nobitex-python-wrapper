@@ -112,6 +112,7 @@ class Path(Enum):
     ADD_ACCOUNT = "/users/accounts-add"
     GET_USER_LIMITATIONS = "/users/limitations"
     GET_WALLET_LIST = "/users/wallets/list"
+    GET_WALLETS = "/v2/wallets"
     
 class Resolution(Enum):
     

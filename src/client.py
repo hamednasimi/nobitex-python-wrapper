@@ -79,13 +79,13 @@ class Client:
             A `dict` containing the response.
         """
         
-        # print(params) # DEBUG
+        # print(str(data)) # DEBUG
         response = await self.__session.get(
             f"{url}", 
             params=params, 
             headers=headers, 
             data=str(data))
-        # print(response.url)
+        print(response.url)
         return await response.json()
     
     async def __post(
@@ -310,7 +310,7 @@ Initialize the client using your API token as such: \
         """
         Generate a wallet address for the user.
         
-        Rate limit: 30/H
+        Rate limit: 30/h
         Token: Required
         
         Args:
@@ -333,7 +333,7 @@ Initialize the client using your API token as such: \
         elif wallet and currency:
             data = {"currency": currency.value, "wallet": str(wallet)}
         elif not currency and not wallet:
-            raise Exception("At least one argument is needed.")
+            raise Exception("At least one of the argument is needed.")
         if self.has_token:
             return await self.__post(
                 Path.GENERATE_WALLET_ADDRESS.value, 
@@ -352,7 +352,7 @@ Initialize the client using your API token as such: \
         """
         Add an iranian bank card to the Nobitex account.
         
-        Rate limit: 30/30M
+        Rate limit: 30/30min
         Token: Required
         
         Args:
@@ -389,7 +389,7 @@ Initialize the client using your API token as such: \
         """
         Add an iranian bank account to the Nobitex account.
         
-        Rate limit: 30/30M
+        Rate limit: 30/30min
         Token: Required
         
         Args:
@@ -449,18 +449,16 @@ Initialize the client using your API token as such: \
 `client = Client('yourTOKENhereHEX0000000000')`")
         
     async def get_wallet_list(
-        self, 
-        type: TradeType = None, 
+        self
         ) -> dict:
         """
         Get the list of wallets in the user account.
-        By default returns spot wallets.
         
-        Rate limit: 20/2MIN
+        Rate limit: 20/2min
         Token: Required
         
         Args:
-            type: The type of wallet to return.
+            None
 
         Returns:
             `dict` containing the user wallets.
@@ -469,13 +467,46 @@ Initialize the client using your API token as such: \
             None
         """
         
-        data = {}
-        if type:
-            data = {"type": type.value}
         if self.has_token:
             return await self.__get(
-                Path.GET_WALLET_LIST.value, 
-                data=data)
+                Path.GET_WALLET_LIST.value)
+        else:
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
+        
+    async def get_wallets(
+        self, 
+        *currencies: tuple[Currency, ...], 
+        type: TradeType = TradeType.SPOT
+        ) -> dict:
+        """
+        Get the list of wallets in the user account.
+        By default returns spot wallets.
+        
+        Rate limit: 12/min
+        Token: Required
+        
+        Args:
+            currencies: The source currency/currencies.
+            type: The type of wallet you need the address for (spot or margin).
+
+        Returns:
+            `dict` containing the user wallets.
+        
+        Raises:
+            None
+        """
+        
+        if type not in [TradeType.SPOT, TradeType.MARGIN]:
+            raise Exception("The type needs to be either `TradeType.SPOT` or `TradeType.MARGIN`")
+        params = {"type": type.value}
+        if currencies:
+            params.update({"currencies": ",".join(i.value for i in currencies)})
+        if self.has_token:
+            return await self.__get(
+                Path.GET_WALLETS.value, 
+                params=params)
         else:
             raise Exception("The client does not have a token! \
 Initialize the client using your API token as such: \
