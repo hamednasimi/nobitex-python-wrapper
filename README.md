@@ -1,5 +1,7 @@
 # An unofficial wrapper for the Nobitex crypto exchange API
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/af84b34e404c42ec91ad5e7d0ae98e41)](https://app.codacy.com/gh/hamednasimi/nobitex-python-wrapper?utm_source=github.com&utm_medium=referral&utm_content=hamednasimi/nobitex-python-wrapper&utm_campaign=Badge_Grade)
+
 Currently supports the public API nodes including:
 
 - The orderbook
