@@ -9,7 +9,7 @@ Currently supports the public API nodes including:
 - Global market stats
 - Get user profile data
 
-## Get started:
+## Get started
 
 ```python
 

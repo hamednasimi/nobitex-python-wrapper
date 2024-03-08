@@ -1,9 +1,7 @@
 # Originally published by Hamed Nasimi at https://github.com/hamednasimi/nobitex-python-wrapper
 
-import asyncio
 import aiohttp
-import time
-from .utils import *
+from .utils import (Symbol, Path, Currency, Resolution, TradeType)
 
 # TODO Make the exception class
 # TODO Create the rate limiter
@@ -23,9 +21,9 @@ class Client:
 
     def __init__(
         self, 
-        api_token: str = None, 
-        bot_mode: bool = True, 
-        bot_name: str = 'WrapperBot', 
+        api_token: str = None,
+        bot_mode: bool = True,
+        bot_name: str = 'WrapperBot',
         rate_limiter: bool = True
         ) -> None:
         """
@@ -47,7 +45,7 @@ class Client:
         if api_token:
             self.has_token = True
             self.__session = aiohttp.ClientSession(
-                base_url=Client.REST_API_BASE_URL, 
+                base_url=Client.REST_API_BASE_URL,
                 headers={"Authorization": f"Token {api_token}"})
         else:
             self.has_token = False
@@ -62,10 +60,10 @@ class Client:
         await self.__session.close()
         
     async def __get(
-        self, 
-        url: str, 
-        params: dict = None, 
-        headers: dict = None, 
+        self,
+        url: str,
+        params: dict = None,
+        headers: dict = None,
         data: dict = None
         ) -> dict:
         """
@@ -81,17 +79,17 @@ class Client:
         
         # print(str(data)) # DEBUG
         response = await self.__session.get(
-            f"{url}", 
-            params=params, 
-            headers=headers, 
+            f"{url}",
+            params=params,
+            headers=headers,
             data=str(data))
         print(response.url)
         return await response.json()
     
     async def __post(
-        self, 
-        url: str, 
-        params: dict = None, 
+        self,
+        url: str,
+        params: dict = None,
         headers: dict = None,
         data: dict = None
         ) -> dict:
@@ -106,18 +104,18 @@ class Client:
             A `dict` containing the response.
         """
         
-        print(data) # DEBUG
-        print(type(data)) # DEBUG
         response = await self.__session.post(
-            f"{url}", 
-            params=params, 
-            headers=headers, 
+            f"{url}",
+            params=params,
+            headers=headers,
             data=str(data))
-        # print(response.url)
+        # print(data) # DEBUG
+        # print(type(data)) # DEBUG
+        # print(response.url) # DEBIG
         return await response.json()
     
     async def get_order_book(
-        self, 
+        self,
         symbol: Symbol
         ) -> dict:
         """
@@ -140,7 +138,7 @@ class Client:
         return await self.__get(f"{Path.GET_ORDER_BOOK.value}{symbol.value}")
 
     async def get_market_depth(
-        self, 
+        self,
         symbol: Symbol
         ) -> dict:
         """
@@ -165,7 +163,7 @@ Consider fetching them by calling this method for each individual symbol.")
         return await self.__get(f"{Path.GET_MARKET_DEPTH.value}{symbol.value}")
     
     async def get_trades(
-        self, 
+        self,
         symbol: Symbol
         ) -> dict:
         """
@@ -191,8 +189,8 @@ Consider fetching them by calling this method for each individual symbol.")
         return await self.__get(f"{Path.GET_TRADES.value}{symbol.value}")
     
     async def get_market_stats(
-        self, 
-        *source_currency: tuple[Currency, ...], 
+        self,
+        *source_currency: tuple[Currency, ...],
         destination_currency: Currency
         ) -> dict:
         """
@@ -214,12 +212,12 @@ Consider fetching them by calling this method for each individual symbol.")
         
         sources = ",".join(i.value for i in source_currency)
         return await self.__get(
-            f"{Path.GET_MARKET_STATS.value}", 
+            f"{Path.GET_MARKET_STATS.value}",
             params={"srcCurrency": sources, "dstCurrency": destination_currency.value})
         
     async def ohlcv(
-        self, 
-        symbol: Symbol, 
+        self,
+        symbol: Symbol,
         resolution: Resolution,
         from_: int,
         to_: int,
@@ -250,12 +248,12 @@ Consider fetching them by calling this method for each individual symbol.")
         """
         
         return await self.__get(
-            f"{Path.OHLCV.value}", 
-            params={"symbol": symbol.value, 
-                    "resolution": resolution.value, 
-                    "from": from_, 
-                    "to": to_, 
-                    "countback": countback, 
+            f"{Path.OHLCV.value}",
+            params={"symbol": symbol.value,
+                    "resolution": resolution.value,
+                    "from": from_,
+                    "to": to_,
+                    "countback": countback,
                     "page": page})
         
     async def get_global_market_stats(self) -> dict:
@@ -303,8 +301,8 @@ Initialize the client using your API token as such: \
 `client = Client('apitoken0000000000000')`")
         
     async def generate_wallet_address(
-        self, 
-        currency: Currency = None, 
+        self,
+        currency: Currency = None,
         wallet: str = None
         ) -> dict:
         """
@@ -345,8 +343,8 @@ Initialize the client using your API token as such: \
 `client = Client('yourTOKENhereHEX0000000000')`")
 
     async def add_card(
-        self, 
-        number: int, 
+        self,
+        number: int,
         bank: str
         ) -> dict:
         """
@@ -372,7 +370,7 @@ Initialize the client using your API token as such: \
             raise Exception("Both `number` and `bank` arguments are required.")
         if self.has_token:
             return await self.__post(
-                Path.ADD_CARD.value, 
+                Path.ADD_CARD.value,
                 headers={"content-type": "application/json"},
                 data=data)
         else:
@@ -381,9 +379,9 @@ Initialize the client using your API token as such: \
 `client = Client('yourTOKENhereHEX0000000000')`")
 
     async def add_account(
-        self, 
-        number: int, 
-        shaba: str, 
+        self,
+        number: int,
+        shaba: str,
         bank: str
         ) -> dict:
         """
@@ -411,7 +409,7 @@ Initialize the client using your API token as such: \
             raise Exception("All of the `number`, `shaba` and `bank` arguments are required.")
         if self.has_token:
             return await self.__post(
-                Path.ADD_ACCOUNT.value, 
+                Path.ADD_ACCOUNT.value,
                 headers={"content-type": "application/json"},
                 data=data)
         else:
@@ -420,7 +418,7 @@ Initialize the client using your API token as such: \
 `client = Client('yourTOKENhereHEX0000000000')`")
 
     async def get_user_limitations(
-        self, 
+        self,
         ) -> dict:
         """
         Get the limitations on the actions the user can take and the amount of \
@@ -441,8 +439,8 @@ allowed withdrawals from the website.
         
         if self.has_token:
             return await self.__post(
-                Path.GET_USER_LIMITATIONS.value, 
-                headers={"content-type": "application/json"},)
+                Path.GET_USER_LIMITATIONS.value,
+                headers={"content-type": "application/json"})
         else:
             raise Exception("The client does not have a token! \
 Initialize the client using your API token as such: \
@@ -476,9 +474,9 @@ Initialize the client using your API token as such: \
 `client = Client('yourTOKENhereHEX0000000000')`")
         
     async def get_wallets(
-        self, 
-        *currencies: tuple[Currency, ...], 
-        type: TradeType = TradeType.SPOT
+        self,
+        *currencies: tuple[Currency, ...],
+        wallet_type: TradeType = TradeType.SPOT
         ) -> dict:
         """
         Get the list of wallets in the user account.
@@ -498,16 +496,17 @@ Initialize the client using your API token as such: \
             None
         """
         
-        if type not in [TradeType.SPOT, TradeType.MARGIN]:
+        if wallet_type not in [TradeType.SPOT, TradeType.MARGIN]:
             raise Exception("The type needs to be either `TradeType.SPOT` or `TradeType.MARGIN`")
-        params = {"type": type.value}
+        params = {"type": wallet_type.value}
         if currencies:
             params.update({"currencies": ",".join(i.value for i in currencies)})
         if self.has_token:
             return await self.__get(
-                Path.GET_WALLETS.value, 
+                Path.GET_WALLETS.value,
                 params=params)
         else:
             raise Exception("The client does not have a token! \
 Initialize the client using your API token as such: \
 `client = Client('yourTOKENhereHEX0000000000')`")
+

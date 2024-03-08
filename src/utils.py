@@ -135,3 +135,4 @@ class TradeType(Enum):
     MARGIN = "margin"
     
 RESTAPIRequestType = Literal["GET", "POST", "PUT", "DELETE"]
+
