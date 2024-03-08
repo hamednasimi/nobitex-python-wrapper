@@ -1,3 +1,5 @@
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d1ceb3932b7a4ae28deb13d22e4f8b06)](https://app.codacy.com/gh/hamednasimi/nobitex-python-wrapper/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 # An unofficial wrapper for the Nobitex crypto exchange API
 
 Currently supports the public API nodes including:
