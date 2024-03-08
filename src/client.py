@@ -12,7 +12,7 @@ class Client:
     """
     The class for handling the setup and configuration of the client object.
     """
-    
+
     # Constants
     
     REST_API_BASE_URL = 'https://api.nobitex.ir'
@@ -20,7 +20,7 @@ class Client:
     # Dunder methods
 
     def __init__(
-        self, 
+        self,
         api_token: str = None,
         bot_mode: bool = True,
         bot_name: str = 'WrapperBot',
@@ -334,7 +334,7 @@ Initialize the client using your API token as such: \
             raise Exception("At least one of the argument is needed.")
         if self.has_token:
             return await self.__post(
-                Path.GENERATE_WALLET_ADDRESS.value, 
+                Path.GENERATE_WALLET_ADDRESS.value,
                 headers={"content-type": "application/json"},
                 data=data)
         else:

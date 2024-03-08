@@ -1,6 +1,7 @@
 # An unofficial wrapper for the Nobitex crypto exchange API
 
 Currently supports the public API nodes including:
+
 - The orderbook
 - Market depth
 - Trades

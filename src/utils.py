@@ -3,7 +3,7 @@ from typing import Literal
 
 
 class Symbol(Enum):
-    
+
     ALL = "all"
     BTCIRT = 'BTCIRT'
     ETHIRT = 'ETHIRT'
@@ -63,7 +63,7 @@ class Symbol(Enum):
     USDCUSDT = 'USDCUSDT'
     
 class Currency(Enum):
-    
+
     rls = 'rls'
     btc = 'btc'
     eth = 'eth'
@@ -96,7 +96,7 @@ class Currency(Enum):
     usdc = 'usdc'
     
 class Path(Enum):
-    
+
     # Public market data
     GET_ORDER_BOOK = "/v2/orderbook/"
     GET_MARKET_DEPTH = "/v2/depth/"
@@ -115,7 +115,7 @@ class Path(Enum):
     GET_WALLETS = "/v2/wallets"
     
 class Resolution(Enum):
-    
+
     _1MIN = '1'
     _5MIN = '5'
     _15MIN = '15'
@@ -130,9 +130,10 @@ class Resolution(Enum):
     _3DAY = '3D'
     
 class TradeType(Enum):
-    
+
     SPOT = "spot"
     MARGIN = "margin"
-    
+
+
 RESTAPIRequestType = Literal["GET", "POST", "PUT", "DELETE"]
 
