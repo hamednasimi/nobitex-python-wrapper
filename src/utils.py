@@ -113,6 +113,10 @@ class Path(Enum):
     GET_USER_LIMITATIONS = "/users/limitations"
     GET_WALLET_LIST = "/users/wallets/list"
     GET_WALLETS = "/v2/wallets"
+    GET_BALANCE = "/users/wallets/balance"
+    GET_TRANSACTIONS = "/users/wallets/transactions/list"
+    GET_DEPOSITS_LIST = "/users/wallets/deposits/list"
+    FAVORITE_MARKETS = "/users/markets/favorite"
     
 class Resolution(Enum):
 

@@ -7,6 +7,9 @@ from .utils import (Symbol, Path, Currency, Resolution, TradeType)
 # TODO Create the rate limiter
 # TODO Make the methods argument lists fool-proof (conditions and assertions)
 # TODO Make importing the client also import the `utils` classes
+# TODO Make every token-required routine to do the has_token check ar the beginning instead
+# TODO Move each of the major parts of the code \
+    # (user related, account related, ...) into their own discrete classes
 
 class Client:
     """
@@ -77,7 +80,6 @@ class Client:
             A `dict` containing the response.
         """
         
-        # print(str(data)) # DEBUG
         response = await self.__session.get(
             f"{url}",
             params=params,
@@ -109,9 +111,32 @@ class Client:
             params=params,
             headers=headers,
             data=str(data))
-        # print(data) # DEBUG
-        # print(type(data)) # DEBUG
-        # print(response.url) # DEBIG
+        return await response.json()
+    
+    async def __delete(
+        self,
+        url: str,
+        params: dict = None,
+        headers: dict = None,
+        data: dict = None
+        ) -> dict:
+        """
+        The main coroutine for handling DELETE requests.
+        
+        Args:
+            url: The URL of the API endpoint to call.
+            params: The `dict` that will get converted to query string.
+            
+        Returns:
+            A `dict` containing the response.
+        """
+        
+        response = await self.__session.delete(
+            f"{url}",
+            params=params,
+            headers=params,
+            data=str(data)
+            )
         return await response.json()
     
     async def get_order_book(
@@ -487,7 +512,8 @@ Initialize the client using your API token as such: \
         
         Args:
             currencies: The source currency/currencies.
-            type: The type of wallet you need the address for (spot or margin).
+            wallet_type: The type of wallet you need the address for (spot or margin).
+            wallet_type needs to be a keyword argument e.g. `wallet_type=TradeType.MARGIN`.
 
         Returns:
             `dict` containing the user wallets.
@@ -510,3 +536,188 @@ Initialize the client using your API token as such: \
 Initialize the client using your API token as such: \
 `client = Client('yourTOKENhereHEX0000000000')`")
 
+    async def get_balance(
+        self,
+        currency: Currency
+        ) -> dict:
+        """
+        Get the specific currency balance in the account.
+        Returns spot balance only.
+        For margin use `.client.get_wallets(Currency.usdt, wallet_type=TradeType.MARGIN)`
+        
+        Rate limit: 60/2min
+        Token: Required
+        
+        Args:
+            currency: The currency to get the balance for.
+
+        Returns:
+            `dict` containing the balance and status of the request.
+        
+        Raises:
+            None
+        """
+        
+        if self.has_token:
+            return await self.__post(
+                Path.GET_BALANCE.value,
+                data={"currency": currency.value})
+        else:
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
+
+    async def get_transactions(
+        self,
+        wallet_ID: int
+        ) -> dict:
+        """
+        Get the latest transactions to/from the given wallet.
+        
+        Rate limit: 60/2min
+        Token: Required
+        
+        Args:
+            wallet_ID: The ID of the wallet.
+
+        Returns:
+            `dict` containing the list of transactions and request status.
+        
+        Raises:
+            None
+        """
+        
+        if self.has_token:
+            return await self.__post(
+                Path.GET_TRANSACTIONS.value,
+                params={"wallet": int(wallet_ID)})
+        else:
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
+
+    async def get_deposits_list(
+        self,
+        wallet_ID: str
+        ) -> dict:
+        """
+        Get the list of deposits for the given wallet.
+        
+        Rate limit: 60/2min
+        Token: Required
+        
+        Args:
+            wallet_ID: The ID of the wallet.
+
+        Returns:
+            `dict` containing the list of deposits and request status.
+        
+        Raises:
+            None
+        """
+        
+        if self.has_token:
+            return await self.__get(
+                Path.GET_DEPOSITS_LIST.value,
+                params={"wallet": str(wallet_ID)})
+        else:
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
+
+    async def get_favorite_markets(
+        self,
+        ) -> dict:
+        """
+        Get the favorite markets list.
+        
+        Rate limit: 6/min
+        Token: Required
+        
+        Args:
+            None
+
+        Returns:
+            `dict` containing the list of your favorite markets and request status.
+        
+        Raises:
+            None
+        """
+        
+        if self.has_token:
+            return await self.__get(
+                Path.FAVORITE_MARKETS.value)
+        else:
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
+
+    async def set_favorite_markets(
+        self,
+        *market: Symbol
+        ) -> dict:
+        """
+        Add a symbol to the favorite markets list.
+        
+        Rate limit: 12/min
+        Token: Required
+        
+        Args:
+            market: The symbol(s) to add to the list of favorite markets.
+
+        Returns:
+            `dict` containing the list of your favorite markets and request status.
+        
+        Raises:
+            None
+        """
+        raise NotImplementedError()
+        '''
+        if Symbol.ALL in market:
+            raise ValueError("The market parameter can't be Symbol.ALL.")
+        params = {"currencies": ",".join(i.value for i in market)}
+        if self.has_token:
+            return await self.__post(
+                Path.FAVORITE_MARKETS.value,
+                params=params)
+        else:
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
+        '''
+
+    async def delete_favorite_markets(
+        self,
+        *market: Symbol
+        ) -> dict:
+        """
+        Delete one or all of the symbols from the favorite markets list.
+        
+        Rate limit: 12/min
+        Token: Required
+        
+        Args:
+            market: The symbol(s) to add to the list of favorite markets.
+            Can be Symbol.ALL to delete all of the favorite markets.
+
+        Returns:
+            `dict` containing the list of your favorite markets and request status.
+        
+        Raises:
+            None
+        """
+        raise NotImplementedError()
+        '''
+        if len(market) == 1 and market[0] == Symbol.ALL:
+            params = {"market": "ALL"}
+        else:
+            params = {"market": ",".join(i.value for i in market)}
+        if self.has_token:
+            return await self.__delete(
+                Path.FAVORITE_MARKETS.value,
+                params=params)
+        else:
+            raise Exception("The client does not have a token! \
+Initialize the client using your API token as such: \
+`client = Client('yourTOKENhereHEX0000000000')`")
+        '''
